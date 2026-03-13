@@ -39,12 +39,16 @@ Since the Supabase CLI isn't required, run the migration directly in the dashboa
 2. Find **Email** and ensure it's enabled
 3. Under **Email**, enable **Confirm email** if you want users to verify before signing in (recommended)
 4. Go to **Authentication** → **URL Configuration**
-5. Add your **Site URL**:
+5. Set **Site URL** (where users land after magic link):
    - Local: `http://localhost:3000`
-   - Production: `https://your-vercel-domain.vercel.app`
-6. Add **Redirect URLs**:
+   - Production: `https://clawcomp.net`
+6. Add **Redirect URLs** (must include the magic link destination):
    - `http://localhost:3000/**`
-   - `https://your-vercel-domain.vercel.app/**`
+   - `https://clawcomp.net/**`
+   - `https://clawcomp.net/apply` (explicit path for production)
+   - `https://clawcomp.net/admin` (admin portal)
+
+   > **Important:** The magic link must redirect to a URL in this list. If `https://clawcomp.net/apply` is missing, users will land on the wrong page or get an auth error.
 
 ---
 
@@ -55,9 +59,13 @@ Create or update `.env.local` in your project root:
 ```
 NEXT_PUBLIC_SUPABASE_URL=https://YOUR_PROJECT_REF.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key_here
+
+# Optional but recommended for production: rate limiting (magic link spam protection)
+UPSTASH_REDIS_REST_URL=https://your-db.upstash.io
+UPSTASH_REDIS_REST_TOKEN=your_token_here
 ```
 
-Replace with your actual values from Step 1.
+Replace with your actual values from Step 1. For Upstash setup, see [docs/security.md](./security.md).
 
 **Important:** Restart your dev server (`npm run dev`) after adding or changing `.env.local` — Next.js only loads env vars at startup.
 

@@ -29,11 +29,11 @@ export function Hero() {
           className="mb-6"
         >
           <Image
-            src="/logos/open-link-comb-logo-no-bg.png"
+            src="/logos/link-claw-combined-edited-brighter-red.png"
             alt="Link Ventures x OpenClaw"
             width={480}
             height={168}
-            className="h-[10.5rem] w-auto"
+            className="h-[11.55rem] w-auto"
           />
         </motion.div>
         <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight text-text-primary mb-6">

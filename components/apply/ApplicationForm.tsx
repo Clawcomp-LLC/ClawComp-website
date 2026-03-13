@@ -5,14 +5,6 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { TeamModal } from "./TeamModal";
 
-const ALLOWED_DOMAINS = [
-  "mit.edu",
-  "harvard.edu",
-  "northeastern.edu",
-  "rochester.edu",
-  "virginia.edu",
-];
-
 const UNIVERSITIES = [
   "MIT",
   "Harvard",
@@ -58,6 +50,25 @@ export function ApplicationForm() {
   const supabase = createClient();
 
   useEffect(() => {
+    // Explicitly handle magic link callback: parse hash and set session (client may not auto-process)
+    const hash = typeof window !== "undefined" ? window.location.hash : "";
+    if (hash && hash.includes("access_token")) {
+      const params = new URLSearchParams(hash.substring(1));
+      const accessToken = params.get("access_token");
+      const refreshToken = params.get("refresh_token");
+      if (accessToken && refreshToken) {
+        supabase.auth
+          .setSession({ access_token: accessToken, refresh_token: refreshToken })
+          .then(({ data: { session } }) => {
+            if (session?.user?.email) {
+              setEmail(session.user.email);
+              setStep("basic");
+              window.history.replaceState(null, "", "/apply");
+            }
+          });
+        return;
+      }
+    }
     supabase.auth.getUser().then(({ data: { user } }) => {
       if (user?.email) {
         setEmail(user.email);
@@ -67,9 +78,13 @@ export function ApplicationForm() {
   }, [supabase.auth]);
 
   useEffect(() => {
+    // Handle magic link callback: INITIAL_SESSION fires when session is restored from URL hash
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
-        if (event === "SIGNED_IN" && session?.user?.email) {
+        if (
+          (event === "SIGNED_IN" || event === "INITIAL_SESSION") &&
+          session?.user?.email
+        ) {
           setEmail(session.user.email);
           setStep("basic");
         }
@@ -81,21 +96,17 @@ export function ApplicationForm() {
   async function handleSendMagicLink(e: React.FormEvent) {
     e.preventDefault();
     setEmailError("");
-    const domain = email.split("@")[1]?.toLowerCase();
-    if (!ALLOWED_DOMAINS.includes(domain)) {
-      setEmailError(
-        `Please use a university email (@mit.edu, @harvard.edu, @northeastern.edu, @rochester.edu, @virginia.edu)`
-      );
-      return;
-    }
+    // Validation is server-side only — keeps override list private (never in client bundle)
     setLoading(true);
-    const { error } = await supabase.auth.signInWithOtp({
-      email: email.trim(),
-      options: { emailRedirectTo: `${window.location.origin}/apply` },
+    const res = await fetch("/api/auth/send-magic-link", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email: email.trim() }),
     });
+    const data = await res.json().catch(() => ({}));
     setLoading(false);
-    if (error) {
-      setEmailError(error.message);
+    if (!res.ok) {
+      setEmailError(data.error || "Something went wrong");
       return;
     }
     setEmailSent(true);

@@ -8,6 +8,7 @@
   --brand-red-hover: #CC2B2B;
   --brand-coral: #FF6B6B;
   --brand-gold: #C49A6C;
+  --brand-warning: #EAB308;
   --brand-maroon: #6B0000;
   --brand-maroon-deep: #8B0000;
   --text-primary: #FFFFFF;
@@ -25,6 +26,7 @@
   --color-brand-red-hover: var(--brand-red-hover);
   --color-brand-coral: var(--brand-coral);
   --color-brand-gold: var(--brand-gold);
+  --color-brand-warning: var(--brand-warning);
   --color-brand-maroon: var(--brand-maroon);
   --color-brand-maroon-deep: var(--brand-maroon-deep);
   --color-text-primary: var(--text-primary);

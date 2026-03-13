@@ -57,6 +57,7 @@ npm run dev
 2. Import the repo in Vercel
 3. Add `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` in Vercel project settings
 4. Add your production URL to Supabase Authentication > URL Configuration
+5. **(Recommended)** Add `UPSTASH_REDIS_REST_URL` and `UPSTASH_REDIS_REST_TOKEN` for rate limiting (magic link spam protection). See [docs/security.md](docs/security.md).
 
 ## Pages
 
