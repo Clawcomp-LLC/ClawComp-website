@@ -3,17 +3,13 @@ import { NextResponse } from "next/server";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { isAdminEmail } from "@/lib/admin";
 
-const ALLOWED_DOMAINS = [
-  "mit.edu",
-  "harvard.edu",
-  "northeastern.edu",
-  "rochester.edu",
-  "virginia.edu",
-];
-
 function getAllowedOverrideEmails(): string[] {
   const env = process.env.ALLOWED_OVERRIDE_EMAILS ?? "";
   return env.split(",").map((e) => e.trim().toLowerCase()).filter(Boolean);
+}
+
+function isAllowedUniversityDomain(domain?: string): boolean {
+  return typeof domain === "string" && domain.endsWith(".edu");
 }
 
 export async function POST(request: Request) {
@@ -32,14 +28,13 @@ export async function POST(request: Request) {
     const overrideEmails = getAllowedOverrideEmails();
     const domain = email.split("@")[1]?.toLowerCase();
     const isAllowed =
-      (domain && ALLOWED_DOMAINS.includes(domain)) ||
+      isAllowedUniversityDomain(domain) ||
       overrideEmails.includes(emailLower);
 
     if (!isAllowed) {
       return NextResponse.json(
         {
-          error:
-            "Please use a university email (@mit.edu, @harvard.edu, @northeastern.edu, @rochester.edu, @virginia.edu)",
+          error: "Please use a university email ending in .edu",
         },
         { status: 400 }
       );
