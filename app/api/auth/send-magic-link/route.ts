@@ -1,6 +1,6 @@
 import { createClient } from "@supabase/supabase-js";
 import { NextResponse } from "next/server";
-import { checkRateLimit } from "@/lib/rate-limit";
+import { checkEmailRateLimit, checkIpRateLimit } from "@/lib/rate-limit";
 import { isAdminEmail } from "@/lib/admin";
 
 function getAllowedOverrideEmails(): string[] {
@@ -40,16 +40,30 @@ export async function POST(request: Request) {
       );
     }
 
-    // Rate limit by IP (skip for admin/override emails — used for testing)
+    // Rate limit by both email and IP so users have isolated buckets while shared abuse is capped.
     if (!isAdminEmail(emailLower) && !overrideEmails.includes(emailLower)) {
       const forwarded = request.headers.get("x-forwarded-for");
       const ip =
         forwarded?.split(",")[0]?.trim() ??
         request.headers.get("x-real-ip") ??
         "unknown";
-      const rateLimitResult = await checkRateLimit(`magic-link:${ip}`);
+      const ipRateLimitResult = await checkIpRateLimit(`magic-link-ip:${ip}`);
 
-      if (!rateLimitResult.success) {
+      if (!ipRateLimitResult.success) {
+        return NextResponse.json(
+          {
+            error:
+              "Too many requests from this network. Please wait 15 minutes before requesting another magic link.",
+          },
+          { status: 429 }
+        );
+      }
+
+      const emailRateLimitResult = await checkEmailRateLimit(
+        `magic-link-email:${emailLower}`
+      );
+
+      if (!emailRateLimitResult.success) {
         return NextResponse.json(
           {
             error:

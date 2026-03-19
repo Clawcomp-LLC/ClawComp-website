@@ -5,7 +5,10 @@ import { Redis } from "@upstash/redis";
  * Rate limiter for sensitive endpoints (magic link, etc.).
  * Uses Upstash Redis when env vars are set; skips limiting in dev if not configured.
  */
-function createRateLimiter() {
+function createRateLimiter(
+  requests: number,
+  window: `${number} ${"s" | "m" | "h" | "d"}`
+) {
   const url = process.env.UPSTASH_REDIS_REST_URL;
   const token = process.env.UPSTASH_REDIS_REST_TOKEN;
 
@@ -21,27 +24,37 @@ function createRateLimiter() {
   const redis = new Redis({ url, token });
   return new Ratelimit({
     redis,
-    limiter: Ratelimit.slidingWindow(3, "15 m"), // 3 magic link requests per 15 min per identifier
+    limiter: Ratelimit.slidingWindow(requests, window),
     analytics: true,
   });
 }
 
-let rateLimiter: Ratelimit | null = null;
+let emailRateLimiter: Ratelimit | null = null;
+let ipRateLimiter: Ratelimit | null = null;
 
-export function getRateLimiter(): Ratelimit | null {
-  if (!rateLimiter) {
-    rateLimiter = createRateLimiter();
+function getEmailRateLimiter(): Ratelimit | null {
+  if (!emailRateLimiter) {
+    emailRateLimiter = createRateLimiter(5, "15 m");
   }
-  return rateLimiter;
+  return emailRateLimiter;
 }
 
-export async function checkRateLimit(identifier: string): Promise<{
+function getIpRateLimiter(): Ratelimit | null {
+  if (!ipRateLimiter) {
+    ipRateLimiter = createRateLimiter(20, "15 m");
+  }
+  return ipRateLimiter;
+}
+
+async function checkRateLimit(
+  limiter: Ratelimit | null,
+  identifier: string
+): Promise<{
   success: boolean;
   limit: number;
   remaining: number;
   reset: number;
 }> {
-  const limiter = getRateLimiter();
   if (!limiter) {
     return { success: true, limit: 0, remaining: 0, reset: 0 };
   }
@@ -52,4 +65,12 @@ export async function checkRateLimit(identifier: string): Promise<{
     remaining: result.remaining,
     reset: result.reset,
   };
+}
+
+export async function checkEmailRateLimit(identifier: string) {
+  return checkRateLimit(getEmailRateLimiter(), identifier);
+}
+
+export async function checkIpRateLimit(identifier: string) {
+  return checkRateLimit(getIpRateLimiter(), identifier);
 }
