@@ -3,12 +3,20 @@ import { Redis } from "@upstash/redis";
 
 /**
  * Rate limiter for sensitive endpoints (magic link, etc.).
- * Uses Upstash Redis when env vars are set; skips limiting in dev if not configured.
+ * Uses Upstash Redis when env vars are set; skips limiting when disabled or not configured.
  */
+function isMagicLinkRateLimitDisabled() {
+  return process.env.DISABLE_MAGIC_LINK_RATE_LIMIT === "true";
+}
+
 function createRateLimiter(
   requests: number,
   window: `${number} ${"s" | "m" | "h" | "d"}`
 ) {
+  if (isMagicLinkRateLimitDisabled()) {
+    return null;
+  }
+
   const url = process.env.UPSTASH_REDIS_REST_URL;
   const token = process.env.UPSTASH_REDIS_REST_TOKEN;
 
@@ -55,6 +63,10 @@ async function checkRateLimit(
   remaining: number;
   reset: number;
 }> {
+  if (isMagicLinkRateLimitDisabled()) {
+    return { success: true, limit: 0, remaining: 0, reset: 0 };
+  }
+
   if (!limiter) {
     return { success: true, limit: 0, remaining: 0, reset: 0 };
   }
