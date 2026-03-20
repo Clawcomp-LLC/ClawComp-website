@@ -1,18 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { TeamModal } from "./TeamModal";
-
-const UNIVERSITIES = [
-  "MIT",
-  "Harvard",
-  "Northeastern",
-  "University of Rochester",
-  "University of Virginia",
-  "Other",
-];
 
 type Step = "email" | "basic" | "team" | "questions" | "done";
 
@@ -47,56 +38,57 @@ export function ApplicationForm() {
     openclaw_idea_3: "",
   });
 
-  const supabase = createClient();
+  const supabase = useMemo(() => createClient(), []);
 
   useEffect(() => {
-    // Explicitly handle magic link callback: parse hash and set session (client may not auto-process)
-    const hash = typeof window !== "undefined" ? window.location.hash : "";
-    if (hash && hash.includes("access_token")) {
-      const params = new URLSearchParams(hash.substring(1));
-      const accessToken = params.get("access_token");
-      const refreshToken = params.get("refresh_token");
-      if (accessToken && refreshToken) {
-        supabase.auth
-          .setSession({ access_token: accessToken, refresh_token: refreshToken })
-          .then(({ data: { session } }) => {
-            if (session?.user?.email) {
-              setEmail(session.user.email);
-              setStep("basic");
-              window.history.replaceState(null, "", "/apply");
-            }
-          });
-        return;
-      }
+    const params = new URLSearchParams(window.location.search);
+    const authError = params.get("error");
+    if (authError) {
+      setEmailError(
+        authError === "missing_code"
+          ? "Invalid verification link."
+          : "Authentication failed. Please try again."
+      );
+      window.history.replaceState(null, "", "/apply");
     }
+
     supabase.auth.getUser().then(({ data: { user } }) => {
       if (user?.email) {
         setEmail(user.email);
         setStep("basic");
       }
     });
-  }, [supabase.auth]);
+  }, [supabase]);
 
   useEffect(() => {
-    // Handle magic link callback: INITIAL_SESSION fires when session is restored from URL hash
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, session) => {
-        if (
-          (event === "SIGNED_IN" || event === "INITIAL_SESSION") &&
-          session?.user?.email
-        ) {
-          setEmail(session.user.email);
-          setStep("basic");
-        }
+    if (!emailSent) return;
+
+    const poll = setInterval(async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user?.email) {
+        setEmail(user.email);
+        setStep("basic");
+        clearInterval(poll);
       }
-    );
-    return () => subscription.unsubscribe();
-  }, [supabase.auth]);
+    }, 3000);
+
+    const timeout = setTimeout(() => {
+      clearInterval(poll);
+      setEmailSent(false);
+      setEmailError("Link expired. Please send a new one through the ClawComp website.");
+    }, 10 * 60 * 1000);
+
+    return () => {
+      clearInterval(poll);
+      clearTimeout(timeout);
+    };
+  }, [emailSent, supabase]);
+
+  const isValidEdu = /\.edu$/i.test(email.trim().split("@")[1] || "");
 
   async function handleSendMagicLink(e: React.FormEvent) {
     e.preventDefault();
     setEmailError("");
-    // Validation is server-side only — keeps override list private (never in client bundle)
     setLoading(true);
     const res = await fetch("/api/auth/send-magic-link", {
       method: "POST",
@@ -228,7 +220,7 @@ export function ApplicationForm() {
             {emailError && <p className="text-brand-red text-sm">{emailError}</p>}
             <button
               type="submit"
-              disabled={loading}
+              disabled={loading || !isValidEdu}
               className="w-full bg-brand-red hover:bg-brand-red-hover text-white font-medium py-2.5 rounded-lg transition-colors disabled:opacity-50"
             >
               {loading ? "Sending..." : "Send Magic Link"}
@@ -282,21 +274,16 @@ export function ApplicationForm() {
             <label className="block text-sm font-medium text-text-primary mb-1">
               University
             </label>
-            <select
+            <input
+              type="text"
               value={formData.university}
               onChange={(e) =>
                 setFormData((p) => ({ ...p, university: e.target.value }))
               }
-              className="w-full bg-background border border-border rounded-lg px-4 py-2.5 text-text-primary focus:outline-none focus:border-border-active"
+              className="w-full bg-background border border-border rounded-lg px-4 py-2.5 text-text-primary placeholder:text-text-muted focus:outline-none focus:border-border-active"
+              placeholder="e.g. Northeastern University"
               required
-            >
-              <option value="">Select...</option>
-              {UNIVERSITIES.map((u) => (
-                <option key={u} value={u}>
-                  {u}
-                </option>
-              ))}
-            </select>
+            />
           </div>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

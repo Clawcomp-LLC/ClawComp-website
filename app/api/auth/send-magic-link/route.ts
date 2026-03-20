@@ -104,20 +104,12 @@ export async function POST(request: Request) {
       (process.env.VERCEL_URL
         ? `https://${process.env.VERCEL_URL}`
         : "http://localhost:3000");
-    const emailRedirectTo = `${origin.replace(/\/$/, "")}/apply`;
-
-    // #region agent log
-    fetch('http://127.0.0.1:7581/ingest/c348983f-75a9-4ddb-aae1-9ea5cf938d24',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'fb8ffd'},body:JSON.stringify({sessionId:'fb8ffd',location:'route.ts:pre-otp',message:'About to call signInWithOtp',data:{recipientDomain:domain,emailRedirectTo},timestamp:Date.now()})}).catch(()=>{});
-    // #endregion
+    const emailRedirectTo = `${origin.replace(/\/$/, "")}/auth/callback`;
 
     const { error } = await supabase.auth.signInWithOtp({
       email,
       options: { emailRedirectTo },
     });
-
-    // #region agent log
-    fetch('http://127.0.0.1:7581/ingest/c348983f-75a9-4ddb-aae1-9ea5cf938d24',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'fb8ffd'},body:JSON.stringify({sessionId:'fb8ffd',location:'route.ts:post-otp',message:'signInWithOtp returned',data:{hasError:!!error,errorMessage:error?.message,errorStatus:error?.status},timestamp:Date.now()})}).catch(()=>{});
-    // #endregion
 
     if (error) {
       return NextResponse.json({ error: error.message }, { status: 400 });
@@ -125,9 +117,7 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ success: true });
   } catch (err) {
-    // #region agent log
-    fetch('http://127.0.0.1:7581/ingest/c348983f-75a9-4ddb-aae1-9ea5cf938d24',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'fb8ffd'},body:JSON.stringify({sessionId:'fb8ffd',location:'route.ts:catch',message:'Unhandled exception',data:{error:String(err),name:(err instanceof Error)?err.name:'N/A',stack:(err instanceof Error)?err.stack?.split('\n').slice(0,5).join('\n'):'N/A'},timestamp:Date.now()})}).catch(()=>{});
-    // #endregion
+    console.error("[send-magic-link] Unhandled exception:", err);
     return NextResponse.json(
       { error: "Something went wrong" },
       { status: 500 }
