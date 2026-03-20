@@ -13,6 +13,8 @@ export function ApplicationForm() {
   const [emailSent, setEmailSent] = useState(false);
   const [emailError, setEmailError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [otpCode, setOtpCode] = useState("");
+  const [otpLoading, setOtpLoading] = useState(false);
   const [submitError, setSubmitError] = useState("");
   const [teamModalOpen, setTeamModalOpen] = useState(false);
   const [selectedTeamId, setSelectedTeamId] = useState<string | null>(null);
@@ -102,6 +104,27 @@ export function ApplicationForm() {
       return;
     }
     setEmailSent(true);
+  }
+
+  async function handleVerifyOtp(e: React.FormEvent) {
+    e.preventDefault();
+    setEmailError("");
+    setOtpLoading(true);
+    const { error } = await supabase.auth.verifyOtp({
+      email: email.trim(),
+      token: otpCode.trim(),
+      type: "email",
+    });
+    setOtpLoading(false);
+    if (error) {
+      setEmailError(error.message);
+      return;
+    }
+    const { data: { user } } = await supabase.auth.getUser();
+    if (user?.email) {
+      setEmail(user.email);
+      setStep("basic");
+    }
   }
 
   async function handleLookupTeam() {
@@ -194,12 +217,41 @@ export function ApplicationForm() {
         </h2>
         <p className="text-text-muted text-sm mb-6">
           We need to verify you&apos;re a university student. Enter your
-          university email to receive a magic link.
+          university email to receive a verification code.
         </p>
         {emailSent ? (
-          <div className="bg-background-subtle rounded-lg p-4 text-text-muted text-sm">
-            Check your inbox at <strong className="text-text-primary">{email}</strong> for a
-            magic link. Click it to continue your application.
+          <div className="space-y-4">
+            <div className="bg-background-subtle rounded-lg p-4 text-text-muted text-sm">
+              We sent a verification code to <strong className="text-text-primary">{email}</strong>.
+              Enter the 6-digit code from the email below.
+            </div>
+            <form onSubmit={handleVerifyOtp} className="space-y-3">
+              <input
+                type="text"
+                inputMode="numeric"
+                maxLength={8}
+                value={otpCode}
+                onChange={(e) => setOtpCode(e.target.value.replace(/\D/g, ""))}
+                className="w-full bg-background border border-border rounded-lg px-4 py-2.5 text-text-primary text-center text-lg tracking-widest placeholder:text-text-muted focus:outline-none focus:border-border-active"
+                placeholder="00000000"
+                disabled={otpLoading}
+                autoFocus
+              />
+              {emailError && <p className="text-brand-red text-sm">{emailError}</p>}
+              <button
+                type="submit"
+                disabled={otpLoading || otpCode.length < 6}
+                className="w-full bg-brand-red hover:bg-brand-red-hover text-white font-medium py-2.5 rounded-lg transition-colors disabled:opacity-50"
+              >
+                {otpLoading ? "Verifying..." : "Verify Code"}
+              </button>
+            </form>
+            <button
+              onClick={() => { setEmailSent(false); setEmailError(""); setOtpCode(""); }}
+              className="text-text-muted text-sm hover:text-text-primary transition-colors"
+            >
+              Didn&apos;t receive a code? Send again
+            </button>
           </div>
         ) : (
           <form onSubmit={handleSendMagicLink} className="space-y-4">
@@ -223,7 +275,7 @@ export function ApplicationForm() {
               disabled={loading || !isValidEdu}
               className="w-full bg-brand-red hover:bg-brand-red-hover text-white font-medium py-2.5 rounded-lg transition-colors disabled:opacity-50"
             >
-              {loading ? "Sending..." : "Send Magic Link"}
+              {loading ? "Sending..." : "Send Verification Code"}
             </button>
           </form>
         )}
