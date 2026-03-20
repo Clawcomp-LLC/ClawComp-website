@@ -86,7 +86,7 @@ export function ApplicationForm() {
     };
   }, [emailSent, supabase]);
 
-  const isValidEdu = /\.edu$/i.test(email.trim().split("@")[1] || "");
+  const isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
 
   async function handleSendMagicLink(e: React.FormEvent) {
     e.preventDefault();
@@ -163,6 +163,10 @@ export function ApplicationForm() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setSubmitError("");
+    if (!selectedTeamId) {
+      setSubmitError("Please join a team with an invite code or create a new team.");
+      return;
+    }
     if (formData.same_project_as_team === null) {
       setSubmitError("Please indicate if your team is working on the same project.");
       return;
@@ -272,7 +276,7 @@ export function ApplicationForm() {
             {emailError && <p className="text-brand-red text-sm">{emailError}</p>}
             <button
               type="submit"
-              disabled={loading || !isValidEdu}
+              disabled={loading || !isValidEmail}
               className="w-full bg-brand-red hover:bg-brand-red-hover text-white font-medium py-2.5 rounded-lg transition-colors disabled:opacity-50"
             >
               {loading ? "Sending..." : "Send Verification Code"}
@@ -411,7 +415,7 @@ export function ApplicationForm() {
       </div>
 
       <div className="bg-background-elevated border border-border rounded-[0.75rem] p-6 space-y-4">
-        <h2 className="text-xl font-bold text-text-primary">Team</h2>
+        <h2 className="text-xl font-bold text-text-primary">Team <span className="text-brand-red">*</span></h2>
         <div className="flex items-start gap-2 p-4 bg-background-subtle rounded-lg border border-border">
           <svg
             className="w-5 h-5 text-brand-red shrink-0 mt-0.5"
