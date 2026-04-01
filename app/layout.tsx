@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Source_Sans_3 } from "next/font/google";
 import "./globals.css";
 import { Navbar } from "@/components/layout/Navbar";
+import { Footer } from "@/components/layout/Footer";
 
 const sourceSans = Source_Sans_3({
   variable: "--font-source-sans",
@@ -25,6 +26,7 @@ export default function RootLayout({
       <body className="min-h-screen bg-background text-text-primary antialiased font-sans">
         <Navbar />
         {children}
+        <Footer />
       </body>
     </html>
   );

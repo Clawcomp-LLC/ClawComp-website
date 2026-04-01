@@ -530,7 +530,7 @@ export function ApplicationForm() {
             Name 3 things you&apos;d want OpenClaw to do for you
           </label>
           <p className="text-text-muted text-sm mb-2">
-            For inspiration, visit the home page or News tab.
+            For inspiration, visit the home page.
           </p>
           <div className="space-y-2">
             {[1, 2, 3].map((i) => (

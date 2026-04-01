@@ -9,6 +9,7 @@
   --brand-coral: #FF6B6B;
   --brand-gold: #C49A6C;
   --brand-warning: #EAB308;
+  --brand-green: #48BB78;
   --brand-maroon: #6B0000;
   --brand-maroon-deep: #8B0000;
   --text-primary: #FFFFFF;
@@ -27,6 +28,7 @@
   --color-brand-coral: var(--brand-coral);
   --color-brand-gold: var(--brand-gold);
   --color-brand-warning: var(--brand-warning);
+  --color-brand-green: var(--brand-green);
   --color-brand-maroon: var(--brand-maroon);
   --color-brand-maroon-deep: var(--brand-maroon-deep);
   --color-text-primary: var(--text-primary);
@@ -60,4 +62,49 @@ body {
 
 .sponsor-scroll-animation {
   animation: sponsor-scroll 25s linear infinite;
+}
+
+@keyframes gradient-flow {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.animate-gradient-flow {
+  animation: gradient-flow 10s ease-in-out infinite;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+@keyframes sponsor-shimmer {
+  0% { transform: translateX(-100%) rotate(15deg); }
+  100% { transform: translateX(200%) rotate(15deg); }
+}
+
+.sponsor-shimmer {
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(229, 62, 62, 0.04) 40%,
+    rgba(229, 62, 62, 0.08) 50%,
+    rgba(229, 62, 62, 0.04) 60%,
+    transparent 100%
+  );
+  animation: sponsor-shimmer 3s ease-in-out infinite;
+}
+
+.sponsor-grid-overlay {
+  background-image:
+    linear-gradient(rgba(229, 62, 62, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(229, 62, 62, 0.06) 1px, transparent 1px);
+  background-size: 60px 60px;
 }

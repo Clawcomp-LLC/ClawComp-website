@@ -25,10 +25,28 @@ export function Navbar() {
             Home
           </Link>
           <Link
-            href="/news"
+            href="/about"
             className="text-xs font-medium uppercase tracking-widest text-text-primary hover:text-brand-coral transition-colors"
           >
-            News
+            About
+          </Link>
+          <Link
+            href="/sponsors"
+            className="text-xs font-medium uppercase tracking-widest text-text-primary hover:text-brand-coral transition-colors"
+          >
+            Sponsors
+          </Link>
+          <Link
+            href="/founders"
+            className="text-xs font-medium uppercase tracking-widest text-text-primary hover:text-brand-coral transition-colors"
+          >
+            Founders
+          </Link>
+          <Link
+            href="/contact"
+            className="text-xs font-medium uppercase tracking-widest text-text-primary hover:text-brand-coral transition-colors"
+          >
+            Contact
           </Link>
           <Link
             href="/apply"

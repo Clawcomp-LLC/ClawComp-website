@@ -1,12 +1,63 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 
+const TYPEWRITER_LINES = [
+  "Join our community of University students innovating with OpenClaw.",
+  "Win free Mac Minis, cash prizes, and network with the Link Ventures ecosystem.",
+];
+
+function useTypewriter(
+  lines: string[],
+  charSpeed = 45,
+  initialDelay = 800,
+  linePause = 600,
+) {
+  const [displayed, setDisplayed] = useState("");
+  const [started, setStarted] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    const sleep = (ms: number) =>
+      new Promise<void>((r) => setTimeout(r, ms));
+
+    async function run() {
+      await sleep(initialDelay);
+      if (cancelled) return;
+      setStarted(true);
+
+      let output = "";
+      for (let l = 0; l < lines.length; l++) {
+        if (l > 0) {
+          output += "\n";
+          setDisplayed(output);
+          await sleep(linePause);
+        }
+        for (const char of lines[l]) {
+          if (cancelled) return;
+          output += char;
+          setDisplayed(output);
+          await sleep(charSpeed);
+        }
+      }
+    }
+
+    run();
+    return () => { cancelled = true; };
+  }, [lines, charSpeed, initialDelay, linePause]);
+
+  return { displayed, started };
+}
+
 export function Hero() {
+  const { displayed, started } = useTypewriter(TYPEWRITER_LINES);
+
   return (
-    <section className="relative w-full min-h-[90vh] flex flex-col items-center justify-center text-center px-6 pt-24 pb-16 overflow-hidden">
+    <section className="relative w-full min-h-screen flex flex-col items-center justify-center text-center px-6 pt-16 pb-40 overflow-hidden">
       <div
         className="absolute inset-0 pointer-events-none"
         style={{
@@ -36,7 +87,14 @@ export function Hero() {
             className="h-[11.55rem] w-auto"
           />
         </motion.div>
-        <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight text-text-primary mb-6">
+        <h1
+          className="text-5xl md:text-7xl font-extrabold tracking-tight mb-6 bg-clip-text text-transparent animate-gradient-flow"
+          style={{
+            backgroundImage:
+              "linear-gradient(90deg, #E53E3E 0%, #FF6B6B 15%, #FFFFFF 25%, #E53E3E 38%, #FF6B6B 52%, #22D3EE 65%, #FFFFFF 75%, #FF6B6B 85%, #E53E3E 100%)",
+            backgroundSize: "300% 100%",
+          }}
+        >
           ClawComp
         </h1>
         <div className="flex items-center justify-center gap-4 mb-8">
@@ -70,23 +128,17 @@ export function Hero() {
             />
           </Link>
         </div>
-        <p className="text-base md:text-lg leading-relaxed text-text-muted mb-8 max-w-prose">
-          University students compete to build the most revolutionary OpenClaw
-          setups. Win Mac Minis, cash prizes, and networking with the Link
-          ecosystem.
-        </p>
-        <div className="flex flex-col sm:flex-row gap-4">
+        <div className="text-base md:text-lg leading-relaxed text-text-primary mb-8 max-w-prose font-mono min-h-[4.5rem] whitespace-pre-wrap">
+          <span className="text-text-primary/40 mr-1">{">"}</span>
+          {started && displayed}
+          <span className="inline-block w-[0.55em] h-[1.1em] bg-text-primary align-middle ml-px animate-[blink_1s_step-end_infinite]" />
+        </div>
+        <div className="flex justify-center">
           <Link
             href="/apply"
-            className="bg-brand-red hover:bg-brand-red-hover text-white font-medium px-8 py-3.5 rounded-lg transition-colors text-sm uppercase tracking-wider"
+            className="bg-brand-red hover:bg-brand-red-hover text-white font-medium px-10 py-4.5 rounded-lg transition-colors text-base uppercase tracking-wider"
           >
             Apply Now
-          </Link>
-          <Link
-            href="/news"
-            className="border border-border hover:border-border-active text-text-primary font-medium px-8 py-3.5 rounded-lg transition-colors text-sm uppercase tracking-wider"
-          >
-            Explore Stories
           </Link>
         </div>
       </motion.div>
