@@ -105,7 +105,7 @@ export function Hero() {
             className="transition-opacity hover:opacity-80"
           >
             <Image
-              src="/logos/white-bg-removed-Link-logo.png"
+              src="/logos/sponsors/white-bg-removed-Link-logo.png"
               alt="Link Ventures"
               width={96}
               height={48}

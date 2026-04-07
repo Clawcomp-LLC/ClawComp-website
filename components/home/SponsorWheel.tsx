@@ -5,11 +5,11 @@ import { motion, useScroll, useTransform } from "framer-motion";
 import Image from "next/image";
 
 const SPONSORS = [
-  { name: "Link Ventures", src: "/logos/white-bg-removed-Link-logo.png", href: "https://www.linkventures.com/", size: "default" as const },
+  { name: "Link Ventures", src: "/logos/sponsors/white-bg-removed-Link-logo.png", href: "https://www.linkventures.com/", size: "default" as const },
   { name: "Talvy", src: "/logos/sponsors/Talvy-logo.png", href: "https://talvy.com/", size: "large" as const },
   { name: "Blitzy", src: "/logos/sponsors/blitzy-logo.png", href: "https://blitzy.com/", size: "default" as const },
   { name: "VoiceRun", src: "/logos/sponsors/voicerun-logo.png", href: "https://voicerun.ai/", size: "medium" as const, offsetX: "pl-4" },
-  { name: "Link Ventures", src: "/logos/white-bg-removed-Link-logo.png", href: "https://www.linkventures.com/", size: "default" as const },
+  { name: "Link Ventures", src: "/logos/sponsors/white-bg-removed-Link-logo.png", href: "https://www.linkventures.com/", size: "default" as const },
   { name: "Talvy", src: "/logos/sponsors/Talvy-logo.png", href: "https://talvy.com/", size: "large" as const },
   { name: "Blitzy", src: "/logos/sponsors/blitzy-logo.png", href: "https://blitzy.com/", size: "default" as const },
   { name: "VoiceRun", src: "/logos/sponsors/voicerun-logo.png", href: "https://voicerun.ai/", size: "medium" as const, offsetX: "pl-4" },
