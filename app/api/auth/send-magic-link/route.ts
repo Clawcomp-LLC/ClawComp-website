@@ -42,14 +42,14 @@ export async function POST(request: Request) {
     if (!isAllowed) {
       return NextResponse.json(
         {
-          error: "Please use a university email ending in .edu",
+          error: "not_university_email",
         },
         { status: 400 }
       );
     }
 
     // Rate limit by both email and IP so users have isolated buckets while shared abuse is capped.
-    if (!isAdminEmail(emailLower) && !overrideEmails.includes(emailLower)) {
+    if (!isAdminEmail(emailLower)) {
       try {
         const forwarded = request.headers.get("x-forwarded-for");
         const ip =

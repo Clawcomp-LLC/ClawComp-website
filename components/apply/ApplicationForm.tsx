@@ -269,7 +269,27 @@ export function ApplicationForm() {
                 disabled={loading}
               />
             </div>
-            {emailError && <p className="text-brand-red text-sm">{emailError}</p>}
+            {emailError && (
+              <p className="text-brand-red text-sm">
+                {emailError === "not_university_email" ? (
+                  <>
+                    Please use a university email ending in .edu. If your email is
+                    formatted differently, reach out to Jblundy in the{" "}
+                    <a
+                      href="https://discord.gg/sBNNXj5V"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-[#5864f1] hover:text-[#7b83f5] font-medium underline"
+                    >
+                      ClawComp Discord
+                    </a>{" "}
+                    so he can add it to the allow list.
+                  </>
+                ) : (
+                  emailError
+                )}
+              </p>
+            )}
             <button
               type="submit"
               disabled={loading || !isValidEmail}
