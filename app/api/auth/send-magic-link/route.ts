@@ -10,8 +10,11 @@ function getAllowedOverrideEmails(): string[] {
   return env.split(",").map((e) => e.trim().toLowerCase()).filter(Boolean);
 }
 
+const ALLOWED_DOMAIN_SUFFIXES = [".edu", ".edu.cn", ".ca"];
+
 function isAllowedUniversityDomain(domain?: string): boolean {
-  return typeof domain === "string" && domain.endsWith(".edu");
+  if (typeof domain !== "string") return false;
+  return ALLOWED_DOMAIN_SUFFIXES.some((suffix) => domain.endsWith(suffix));
 }
 
 export async function POST(request: Request) {
