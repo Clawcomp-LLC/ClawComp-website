@@ -8,7 +8,7 @@ import { DeadlineCountdown } from "./DeadlineCountdown";
 
 const TYPEWRITER_LINES = [
   "Join our community of University students innovating with OpenClaw.",
-  "Win free Mac Minis, cash prizes, and network with the Link Ventures ecosystem.",
+  "Recieve free Mac Studios, win cash prizes, and network with the Link Ventures ecosystem.",
 ];
 
 function useTypewriter(

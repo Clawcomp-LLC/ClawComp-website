@@ -4,7 +4,7 @@ import { useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import Image from "next/image";
 
-export function MacMiniReveal() {
+export function MacStudioReveal() {
   const sectionRef = useRef<HTMLElement>(null);
 
   const { scrollYProgress } = useScroll({
@@ -49,7 +49,7 @@ export function MacMiniReveal() {
             </motion.span>
           ))}
           <br />
-          {["Mac", "Mini"].map((word) => (
+          {["Mac", "Studio"].map((word) => (
             <motion.span
               key={word}
               className="inline-block mr-[0.25em] text-brand-red"
@@ -77,8 +77,8 @@ export function MacMiniReveal() {
             style={{ y: imageY, opacity: imageOpacity }}
           >
             <Image
-              src="/mac-mini.png"
-              alt="Mac Mini"
+              src="/mac-studio.png"
+              alt="Mac Studio"
               width={800}
               height={533}
               className="w-auto max-w-[90vw] md:max-w-150 lg:max-w-175"

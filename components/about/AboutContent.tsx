@@ -49,9 +49,9 @@ function SectionHeader({
 const BENEFITS = [
   {
     num: "01",
-    title: "Free Mac Mini",
+    title: "Free Mac Studio",
     description:
-      "Every accepted team receives a Mac Mini funded by Link Ventures. We were sick of seeing students not building with OpenClaw because of upfront hardware costs. You keep it regardless of where you finish.",
+      "Every accepted team receives a Mac Studio funded by Link Ventures. We were sick of seeing students not building with OpenClaw because of upfront hardware costs. You keep it regardless of where you finish.",
   },
   {
     num: "02",
@@ -109,7 +109,7 @@ const TIMELINE_STEPS = [
     phase: "03",
     title: "The Build Period",
     description:
-      "Selected teams receive a Mac Mini funded by Link Ventures — yours to keep no matter what. Three months to design, build, and iterate on your autonomous AI systems. Submit weekly 60-second video updates documenting your process. Opt in to have content featured across Link Ventures' media channels and partner creator networks.",
+      "Selected teams receive a Mac Studio funded by Link Ventures — yours to keep no matter what. One month to design, build, and iterate on your autonomous AI systems. Submit weekly 60-second video updates documenting your process. Opt in to have content featured across Link Ventures' media channels and partner creator networks.",
   },
   {
     phase: "04",
@@ -163,7 +163,7 @@ export function AboutContent() {
           >
             <p className="text-lg leading-relaxed text-text-muted mb-6">
               <strong className="text-text-primary">ClawComp</strong> is a
-              multi-month build program — not a weekend hackathon — targeted at
+              month-long build program — not a weekend hackathon — targeted at
               bringing together an elite community of OpenClaw innovators. It is
               designed to fit around what you are already building. The
               program culminates in{" "}
@@ -443,7 +443,7 @@ export function AboutContent() {
               Ready to Build?
             </h2>
             <p className="text-text-muted text-lg mb-10 max-w-[37.5rem] mx-auto">
-              Three months. Real hardware. Real prizes. Real connections. Apply
+              One month. Real hardware. Real prizes. Real connections. Apply
               now and push what you&rsquo;re building further than you would on
               your own.
             </p>

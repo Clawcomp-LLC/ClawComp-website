@@ -5,7 +5,7 @@ import Image from "next/image";
 
 const HIGHLIGHTS = [
   {
-    text: "Free Mac Minis",
+    text: "Free Mac Studios",
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round">
         <rect x="2" y="3" width="20" height="14" rx="2" />

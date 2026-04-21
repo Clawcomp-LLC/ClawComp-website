@@ -31,7 +31,7 @@ const SPONSORS: Sponsor[] = [
     blurb:
       "The venture capital firm behind ClawComp — investing in frontier technology and the builders who push it forward.",
     description:
-      "Link Ventures is a Boston-based venture capital firm with a portfolio spanning AI, cybersecurity, fintech, and deep tech. They don't just write checks — they build ecosystems. Link Studios, their in-house incubator at One Kendall Square in Cambridge, provides founders with office space, mentorship, and direct access to a network of technical operators and industry leaders. ClawComp is the flagship program of Link Studios, designed to identify the next generation of AI builders and fast-track them into the Link ecosystem with Mac Minis, cash prizes, and a fully-funded summit in Boston.",
+      "Link Ventures is a Boston-based venture capital firm with a portfolio spanning AI, cybersecurity, fintech, and deep tech. They don't just write checks — they build ecosystems. Link Studios, their in-house incubator at One Kendall Square in Cambridge, provides founders with office space, mentorship, and direct access to a network of technical operators and industry leaders. ClawComp is the flagship program of Link Studios, designed to identify the next generation of AI builders and fast-track them into the Link ecosystem with Mac Studios, cash prizes, and a fully-funded summit in Boston.",
   },
   {
     name: "VoiceRun",
