@@ -136,7 +136,7 @@ export function Hero() {
         </div>
         <div className="flex justify-center items-stretch gap-4">
           <a
-            href="https://discord.gg/sBNNXj5V"
+            href="https://discord.gg/JFTMjG5vvp"
             target="_blank"
             rel="noopener noreferrer"
             className="group/discord relative inline-flex items-center justify-center gap-2 w-[170px] bg-[#1a1a2e] text-white font-medium rounded-lg text-base uppercase tracking-wider overflow-hidden transition-all duration-300 hover:shadow-[0_0_25px_rgba(88,100,241,0.4)]"

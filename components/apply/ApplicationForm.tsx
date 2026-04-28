@@ -276,7 +276,7 @@ export function ApplicationForm() {
                     Please use a university email ending in .edu, .edu.cn, or .ca.
                     If your email is formatted differently, reach out to Jblundy in the{" "}
                     <a
-                      href="https://discord.gg/sBNNXj5V"
+                      href="https://discord.gg/JFTMjG5vvp"
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-[#5864f1] hover:text-[#7b83f5] font-medium underline"
