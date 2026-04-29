@@ -221,9 +221,19 @@ export function ApplicationForm() {
         </p>
         {emailSent ? (
           <div className="space-y-4">
-            <div className="bg-background-subtle rounded-lg p-4 text-text-muted text-sm">
-              We sent a verification code to <strong className="text-text-primary">{email}</strong>.
-              Enter the 6-digit code from the email below.
+            <div className="bg-background-subtle rounded-lg p-4 space-y-3">
+              <p className="text-text-muted text-sm">
+                We sent a verification code to{" "}
+                <strong className="text-text-primary">{email}</strong>. Enter
+                the 6-digit code from the email below.
+              </p>
+              <p className="text-text-muted text-xs leading-relaxed">
+                <span className="text-brand-coral font-medium">
+                  Don&apos;t see it?
+                </span>{" "}
+                Check your spam or junk folder. If you find it there, mark it
+                as &quot;Not Spam&quot; so future codes land in your inbox.
+              </p>
             </div>
             <form onSubmit={handleVerifyOtp} className="space-y-3">
               <input
