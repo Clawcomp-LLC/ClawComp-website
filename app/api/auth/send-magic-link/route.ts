@@ -2,6 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import { NextResponse } from "next/server";
 import { checkEmailRateLimit, checkIpRateLimit } from "@/lib/rate-limit";
 import { isAdminEmail } from "@/lib/admin";
+import { isAllowedUniversityDomain } from "@/lib/allowed-domains";
 
 const RATE_LIMIT_KEY_VERSION = "v2";
 
@@ -10,11 +11,14 @@ function getAllowedOverrideEmails(): string[] {
   return env.split(",").map((e) => e.trim().toLowerCase()).filter(Boolean);
 }
 
-const ALLOWED_DOMAIN_SUFFIXES = [".edu", ".edu.cn", ".ca"];
-
-function isAllowedUniversityDomain(domain?: string): boolean {
-  if (typeof domain !== "string") return false;
-  return ALLOWED_DOMAIN_SUFFIXES.some((suffix) => domain.endsWith(suffix));
+function maskEmailForLogs(email: string): string {
+  const [localPart, domain = ""] = email.trim().toLowerCase().split("@");
+  if (!localPart || !domain) return "[invalid-email]";
+  const maskedLocal =
+    localPart.length <= 2
+      ? `${localPart[0] ?? "*"}*`
+      : `${localPart.slice(0, 2)}***`;
+  return `${maskedLocal}@${domain}`;
 }
 
 export async function POST(request: Request) {
@@ -41,8 +45,20 @@ export async function POST(request: Request) {
     const isAllowed =
       isAllowedUniversityDomain(domain) ||
       overrideEmails.includes(emailLower);
+    const maskedEmail = maskEmailForLogs(emailLower);
+
+    console.info("[send-magic-link] Request received", {
+      email: maskedEmail,
+      domain,
+      isAllowedDomain: isAllowedUniversityDomain(domain),
+      isOverrideEmail: overrideEmails.includes(emailLower),
+    });
 
     if (!isAllowed) {
+      console.warn("[send-magic-link] Rejected non-university email", {
+        email: maskedEmail,
+        domain,
+      });
       return NextResponse.json(
         {
           error: "not_university_email",
@@ -64,6 +80,13 @@ export async function POST(request: Request) {
         );
 
         if (!ipRateLimitResult.success) {
+          console.warn("[send-magic-link] Blocked by IP rate limit", {
+            email: maskedEmail,
+            ip,
+            limit: ipRateLimitResult.limit,
+            remaining: ipRateLimitResult.remaining,
+            reset: ipRateLimitResult.reset,
+          });
           return NextResponse.json(
             {
               error:
@@ -78,6 +101,12 @@ export async function POST(request: Request) {
         );
 
         if (!emailRateLimitResult.success) {
+          console.warn("[send-magic-link] Blocked by email rate limit", {
+            email: maskedEmail,
+            limit: emailRateLimitResult.limit,
+            remaining: emailRateLimitResult.remaining,
+            reset: emailRateLimitResult.reset,
+          });
           return NextResponse.json(
             {
               error:
@@ -98,8 +127,18 @@ export async function POST(request: Request) {
     });
 
     if (error) {
+      console.error("[send-magic-link] Supabase signInWithOtp failed", {
+        email: maskedEmail,
+        message: error.message,
+        status: error.status,
+        code: error.code,
+      });
       return NextResponse.json({ error: error.message }, { status: 400 });
     }
+
+    console.info("[send-magic-link] Supabase accepted magic-link request", {
+      email: maskedEmail,
+    });
 
     return NextResponse.json({ success: true });
   } catch (err) {

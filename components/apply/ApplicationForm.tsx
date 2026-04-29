@@ -273,8 +273,10 @@ export function ApplicationForm() {
               <p className="text-brand-red text-sm">
                 {emailError === "not_university_email" ? (
                   <>
-                    Please use a university email ending in .edu, .edu.cn, or .ca.
-                    If your email is formatted differently, reach out to Jblundy in the{" "}
+                    Please use a university or college email address. We accept
+                    most academic domains worldwide (e.g. .edu, .ac.uk, .edu.cn,
+                    .edu.au, .ca, etc.). If your school&apos;s email isn&apos;t
+                    recognized, reach out to Jblundy in the{" "}
                     <a
                       href="https://discord.gg/JFTMjG5vvp"
                       target="_blank"
