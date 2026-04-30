@@ -54,7 +54,7 @@ export async function GET(request: Request) {
     const { data: applications, error: appsError } = await adminClient
       .from("applications")
       .select(
-        "id, user_id, team_id, name, university, graduation_year, university_email, phone, major, linkedin_url, links, current_project, same_project_as_team, openclaw_ideas, created_at"
+        "id, user_id, team_id, name, university, graduation_year, university_email, phone, major, linkedin_url, links, current_project, same_project_as_team, openclaw_ideas, heard_about_us, created_at"
       )
       .in("team_id", teamIds);
 

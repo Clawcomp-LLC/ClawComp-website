@@ -17,6 +17,7 @@ type Application = {
   current_project: string | null;
   same_project_as_team: boolean | null;
   openclaw_ideas: string[];
+  heard_about_us: string | null;
   created_at: string;
 };
 
@@ -358,6 +359,12 @@ export function AdminPortal() {
                               <p key={i}>{idea}</p>
                             ))}
                           </dd>
+                        </div>
+                      )}
+                      {app.heard_about_us && (
+                        <div>
+                          <dt className="text-text-muted text-sm mb-1">How they heard about us</dt>
+                          <dd className="text-sm text-text-primary">{app.heard_about_us}</dd>
                         </div>
                       )}
                     </div>

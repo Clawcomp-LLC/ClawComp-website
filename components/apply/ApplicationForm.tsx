@@ -38,6 +38,7 @@ export function ApplicationForm() {
     openclaw_idea_1: "",
     openclaw_idea_2: "",
     openclaw_idea_3: "",
+    heard_about_us: "",
   });
 
   const supabase = useMemo(() => createClient(), []);
@@ -167,6 +168,10 @@ export function ApplicationForm() {
       setSubmitError("Please indicate if your team is working on the same project.");
       return;
     }
+    if (!formData.heard_about_us.trim()) {
+      setSubmitError("Please tell us how you heard about ClawComp.");
+      return;
+    }
     const { data: { user } } = await supabase.auth.getUser();
     if (!user?.email) {
       setSubmitError("Please verify your email first.");
@@ -198,6 +203,7 @@ export function ApplicationForm() {
         current_project: formData.current_project || null,
         same_project_as_team: formData.same_project_as_team,
         openclaw_ideas: openclawIdeas,
+        heard_about_us: formData.heard_about_us.trim(),
       },
       { onConflict: "user_id" }
     );
@@ -558,6 +564,21 @@ export function ApplicationForm() {
               <span className="text-text-primary">No</span>
             </label>
           </div>
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-text-primary mb-1">
+            How did you hear about us? <span className="text-brand-red">*</span>
+          </label>
+          <textarea
+            value={formData.heard_about_us}
+            onChange={(e) =>
+              setFormData((p) => ({ ...p, heard_about_us: e.target.value }))
+            }
+            rows={2}
+            className="w-full bg-background border border-border rounded-lg px-4 py-2.5 text-text-primary placeholder:text-text-muted focus:outline-none focus:border-border-active"
+            placeholder="Friend, professor, social media, club, etc."
+            required
+          />
         </div>
         <div>
           <label className="block text-sm font-medium text-text-primary mb-1">
