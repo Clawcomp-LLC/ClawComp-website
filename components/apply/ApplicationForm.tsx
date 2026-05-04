@@ -16,6 +16,12 @@ export function ApplicationForm() {
   const [otpCode, setOtpCode] = useState("");
   const [otpLoading, setOtpLoading] = useState(false);
   const [submitError, setSubmitError] = useState("");
+  // Seconds remaining before another magic-link send is allowed. Set after a
+  // successful send (default 30s) or parsed from a Supabase 429 ("you can
+  // only request this after X seconds"). Drives a disabled countdown button so
+  // users do not silently hammer retries and trip the upstream rate limiter.
+  const [resendCooldown, setResendCooldown] = useState(0);
+  const [resendNotice, setResendNotice] = useState("");
   const [teamModalOpen, setTeamModalOpen] = useState(false);
   const [selectedTeamId, setSelectedTeamId] = useState<string | null>(null);
   const [inviteCodeInput, setInviteCodeInput] = useState(() => {
@@ -87,24 +93,89 @@ export function ApplicationForm() {
     };
   }, [emailSent, supabase]);
 
+  useEffect(() => {
+    if (resendCooldown <= 0) return;
+    const tick = setTimeout(() => {
+      setResendCooldown((s) => Math.max(0, s - 1));
+    }, 1000);
+    return () => clearTimeout(tick);
+  }, [resendCooldown]);
+
+  useEffect(() => {
+    if (!resendNotice) return;
+    const t = setTimeout(() => setResendNotice(""), 4000);
+    return () => clearTimeout(t);
+  }, [resendNotice]);
+
   const isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
+
+  // Default cooldown applied after a successful send. Long enough that users
+  // do not retry-hammer Microsoft 365's typical inbox-ingestion delay (~30s),
+  // short enough that real failed-delivery cases are not unduly blocked.
+  const DEFAULT_RESEND_COOLDOWN_SEC = 30;
+
+  function parseRetryAfter(message: unknown): number | null {
+    if (typeof message !== "string") return null;
+    const m = message.match(/after\s+(\d+)\s*seconds?/i);
+    if (!m) return null;
+    const n = parseInt(m[1], 10);
+    return Number.isFinite(n) && n > 0 ? n : null;
+  }
+
+  async function sendMagicLink(): Promise<boolean> {
+    setEmailError("");
+    setLoading(true);
+    let res: Response;
+    try {
+      res = await fetch("/api/auth/send-magic-link", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: email.trim() }),
+      });
+    } catch {
+      setLoading(false);
+      setEmailError("Network error. Please check your connection and try again.");
+      return false;
+    }
+    const data = await res.json().catch(() => ({}));
+    setLoading(false);
+
+    if (!res.ok) {
+      const errMessage =
+        typeof data?.error === "string" ? data.error : "Something went wrong";
+      setEmailError(errMessage);
+      const retrySec = parseRetryAfter(errMessage);
+      if (retrySec) setResendCooldown(retrySec);
+      else if (res.status === 429) setResendCooldown(DEFAULT_RESEND_COOLDOWN_SEC);
+      return false;
+    }
+
+    setEmailSent(true);
+    setResendCooldown(DEFAULT_RESEND_COOLDOWN_SEC);
+    return true;
+  }
 
   async function handleSendMagicLink(e: React.FormEvent) {
     e.preventDefault();
-    setEmailError("");
-    setLoading(true);
-    const res = await fetch("/api/auth/send-magic-link", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email: email.trim() }),
-    });
-    const data = await res.json().catch(() => ({}));
-    setLoading(false);
-    if (!res.ok) {
-      setEmailError(data.error || "Something went wrong");
-      return;
+    if (resendCooldown > 0) return;
+    await sendMagicLink();
+  }
+
+  async function handleResend() {
+    if (resendCooldown > 0 || loading) return;
+    const ok = await sendMagicLink();
+    if (ok) {
+      setOtpCode("");
+      setResendNotice("New code sent. Check your inbox + spam folder.");
     }
-    setEmailSent(true);
+  }
+
+  function handleUseDifferentEmail() {
+    setEmailSent(false);
+    setEmailError("");
+    setOtpCode("");
+    setResendNotice("");
+    setResendCooldown(0);
   }
 
   async function handleVerifyOtp(e: React.FormEvent) {
@@ -264,12 +335,30 @@ export function ApplicationForm() {
                 {otpLoading ? "Verifying..." : "Verify Code"}
               </button>
             </form>
-            <button
-              onClick={() => { setEmailSent(false); setEmailError(""); setOtpCode(""); }}
-              className="text-text-muted text-sm hover:text-text-primary transition-colors"
-            >
-              Didn&apos;t receive a code? Send again
-            </button>
+            <div className="flex flex-col items-start gap-2 pt-1">
+              <button
+                type="button"
+                onClick={handleResend}
+                disabled={loading || resendCooldown > 0}
+                className="text-brand-red hover:text-brand-coral text-sm font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:text-brand-red"
+              >
+                {loading
+                  ? "Sending..."
+                  : resendCooldown > 0
+                  ? `Send a new code in ${resendCooldown}s`
+                  : "Didn't receive a code? Send a new one"}
+              </button>
+              {resendNotice && (
+                <p className="text-text-muted text-xs">{resendNotice}</p>
+              )}
+              <button
+                type="button"
+                onClick={handleUseDifferentEmail}
+                className="text-text-muted text-xs hover:text-text-primary transition-colors"
+              >
+                Use a different email
+              </button>
+            </div>
           </div>
         ) : (
           <form onSubmit={handleSendMagicLink} className="space-y-4">
@@ -305,6 +394,22 @@ export function ApplicationForm() {
                     </a>{" "}
                     so he can add it to the allow list.
                   </>
+                ) : emailError === "no_mx_records" ? (
+                  <>
+                    We couldn&apos;t reach that email address — its domain
+                    doesn&apos;t appear to accept mail. Please double-check the
+                    spelling and try again. If you&apos;re sure it&apos;s
+                    correct, reach out to Jblundy in the{" "}
+                    <a
+                      href="https://discord.gg/JFTMjG5vvp"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-[#5864f1] hover:text-[#7b83f5] font-medium underline"
+                    >
+                      ClawComp Discord
+                    </a>
+                    .
+                  </>
                 ) : (
                   emailError
                 )}
@@ -312,10 +417,14 @@ export function ApplicationForm() {
             )}
             <button
               type="submit"
-              disabled={loading || !isValidEmail}
+              disabled={loading || !isValidEmail || resendCooldown > 0}
               className="w-full bg-brand-red hover:bg-brand-red-hover text-white font-medium py-2.5 rounded-lg transition-colors disabled:opacity-50"
             >
-              {loading ? "Sending..." : "Send Verification Code"}
+              {loading
+                ? "Sending..."
+                : resendCooldown > 0
+                ? `Send Verification Code (${resendCooldown}s)`
+                : "Send Verification Code"}
             </button>
           </form>
         )}

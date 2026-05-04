@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import { checkEmailRateLimit, checkIpRateLimit } from "@/lib/rate-limit";
 import { isAdminEmail } from "@/lib/admin";
 import { isAllowedUniversityDomain } from "@/lib/allowed-domains";
+import { checkDomainMx } from "@/lib/email-mx";
 
 const RATE_LIMIT_KEY_VERSION = "v2";
 
@@ -65,6 +66,38 @@ export async function POST(request: Request) {
         },
         { status: 400 }
       );
+    }
+
+    // Reject domains with no MX records — protects sender reputation by
+    // catching typo'd addresses (e.g. `northeasten.edu`) before Resend
+    // attempts delivery and bounces. Override + admin emails skip this so
+    // operators can never get locked out by transient DNS issues.
+    if (
+      !overrideEmails.includes(emailLower) &&
+      !isAdminEmail(emailLower) &&
+      domain
+    ) {
+      const mxResult = await checkDomainMx(domain);
+      if (mxResult.status === "no_mx") {
+        console.warn("[send-magic-link] Rejected — no MX records for domain", {
+          email: maskedEmail,
+          domain,
+        });
+        return NextResponse.json(
+          { error: "no_mx_records" },
+          { status: 400 }
+        );
+      }
+      if (mxResult.status === "lookup_failed") {
+        console.warn(
+          "[send-magic-link] MX lookup failed; allowing request through",
+          {
+            email: maskedEmail,
+            domain,
+            reason: mxResult.reason,
+          }
+        );
+      }
     }
 
     // Rate limit by both email and IP so users have isolated buckets while shared abuse is capped.
