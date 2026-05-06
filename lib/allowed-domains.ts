@@ -89,7 +89,11 @@ export const ALLOWED_DOMAIN_SUFFIXES: readonly string[] = [
   ".ac.fj", // Fiji
   ".ac.id", // Indonesia
   ".ac.il", // Israel
+
   ".ac.in", // India
+  ".msit.in",
+
+
   ".ac.ir", // Iran
   ".ac.jp", // Japan
   ".ac.ke", // Kenya
@@ -166,6 +170,7 @@ export const ALLOWED_INSTITUTION_DOMAINS: readonly string[] = [
   "tu-dresden.de",
   "tu-muenchen.de",
   "kit.edu",
+  "rhrk.uni-kl.de",
 
   // France
   "sciencespo.fr",
@@ -291,11 +296,16 @@ export const ALLOWED_INSTITUTION_DOMAINS: readonly string[] = [
   "dcu.ie",
   "mu.ie",
   "ul.ie",
+  "ucdconnect.ie",
 
   // Russia (some research institutions use bare .ru)
   "msu.ru",
   "spbu.ru",
   "hse.ru",
+
+  //Romania
+  "ucv.ro"
+
 ];
 
 /**
