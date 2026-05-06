@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 
-const DEADLINE = new Date("2026-05-08T23:59:59-04:00").getTime();
+const DEADLINE = new Date("2026-05-10T23:59:59-04:00").getTime();
 
 function pad(n: number) {
   return String(n).padStart(2, "0");
@@ -36,7 +36,7 @@ export function DeadlineCountdown() {
   return (
     <div className="text-center mt-6">
       <p className="text-lg font-semibold text-brand-red mb-2">
-        Deadline: May 8th
+        Deadline: May 10th
       </p>
       <div className="flex justify-center gap-3 text-sm font-mono text-text-primary">
         <div className="flex flex-col items-center">
