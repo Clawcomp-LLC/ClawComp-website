@@ -90,7 +90,7 @@ const TIMELINE_STEPS = [
     phase: "01",
     title: "Apply",
     description:
-      "Submit your application with a team of one to three members. Accepted applicants are invited to the Talvy group and the cohort Discord server to begin connecting with the community.",
+      "Submit your application with a team of two to three members. Accepted applicants are invited to the Talvy group and the cohort Discord server to begin connecting with the community.",
   },
   {
     phase: "02",
