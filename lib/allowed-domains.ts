@@ -91,8 +91,6 @@ export const ALLOWED_DOMAIN_SUFFIXES: readonly string[] = [
   ".ac.il", // Israel
 
   ".ac.in", // India
-  ".msit.in",
-
 
   ".ac.ir", // Iran
   ".ac.jp", // Japan
@@ -129,6 +127,9 @@ export const ALLOWED_DOMAIN_SUFFIXES: readonly string[] = [
  * ALLOWED_OVERRIDE_EMAILS env var for individual exceptions.
  */
 export const ALLOWED_INSTITUTION_DOMAINS: readonly string[] = [
+  // India
+  "msit.in",
+
   // Switzerland
   "ethz.ch",
   "epfl.ch",
@@ -236,6 +237,7 @@ export const ALLOWED_INSTITUTION_DOMAINS: readonly string[] = [
   "rug.nl",
   "eur.nl",
   "maastrichtuniversity.nl",
+  "student.hu.nl",
 
   // Italy
   "polimi.it",
