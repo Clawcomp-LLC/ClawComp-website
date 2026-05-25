@@ -51,7 +51,7 @@ const BENEFITS = [
     num: "01",
     title: "Free Mac Studio",
     description:
-      "Every accepted team receives a Mac Studio funded by Link Ventures. We were sick of seeing students not building with OpenClaw because of upfront hardware costs. You keep it regardless of where you finish.",
+      "Every accepted team receives a Mac Studio funded by Link Ventures. We were sick of seeing students not building with OpenClaw and Hermes because of upfront hardware costs. You keep it regardless of where you finish.",
   },
   {
     num: "02",
@@ -69,7 +69,7 @@ const BENEFITS = [
     num: "04",
     title: "Build in a Community",
     description:
-      "Build alongside the most ambitious OpenClaw innovators from universities across the country. Weekly video updates, community touchpoints, and shared momentum throughout the program.",
+      "Build alongside the most ambitious OpenClaw and Hermes innovators from universities across the country. Weekly video updates, community touchpoints, and shared momentum throughout the program.",
   },
   {
     num: "05",
@@ -90,7 +90,7 @@ const TIMELINE_STEPS = [
     phase: "01",
     title: "Apply",
     description:
-      "Submit your application with a team of two to three members. Accepted applicants are invited to the Talvy group and the cohort Discord server to begin connecting with the community.",
+      "Submit your application with a team of two to three members. Applicants are invited to the Talvy group and the cohort Discord server to begin connecting with the community.",
   },
   {
     phase: "02",
@@ -101,7 +101,7 @@ const TIMELINE_STEPS = [
         <a href="https://talvy.com/" target="_blank" rel="noopener noreferrer" className="text-brand-coral underline underline-offset-2 hover:text-brand-red transition-colors">
           Talvy group
         </a>{" "}
-        and Discord, and how impressive the community finds your OpenClaw setups. This is your audition &mdash; stand out and you&rsquo;re in.
+        and Discord, and how impressive the community finds your OpenClaw/Hermes setups. This is your audition &mdash; stand out and you&rsquo;re in.
       </>
     ),
   },
@@ -164,7 +164,7 @@ export function AboutContent() {
             <p className="text-lg leading-relaxed text-text-muted mb-6">
               <strong className="text-text-primary">ClawComp</strong> is a
               month-long build program — not a weekend hackathon — targeted at
-              bringing together an elite community of OpenClaw innovators. It is
+              bringing together an elite community of OpenClaw and Hermes innovators. It is
               designed to fit around what you are already building. The
               program culminates in{" "}
               <span style={{ color: "#22D3EE" }}>ClawWeek</span> at Link Ventures, June
@@ -173,13 +173,13 @@ export function AboutContent() {
             <p className="text-lg leading-relaxed text-text-muted mb-6">
               Whether you&rsquo;re a startup founder, building an app with
               friends, experimenting with AI tools, or just brainstorming
-              business ideas — ClawComp challenges you to integrate OpenClaw into
+              business ideas — ClawComp challenges you to integrate OpenClaw and Hermes into
               that work and push it further than you would on your own.
             </p>
             <p className="text-lg leading-relaxed text-text-muted">
               ClawComp rewards teams who build{" "}
               <strong className="text-brand-coral">
-                real OpenClaw automations with measurable outcomes
+                real OpenClaw/Hermes automations with measurable outcomes
               </strong>
               , not wrapper products that fall apart under scrutiny.
             </p>
