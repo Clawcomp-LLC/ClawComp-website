@@ -4,7 +4,6 @@ import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { DeadlineCountdown } from "./DeadlineCountdown";
 
 const TYPEWRITER_LINES = [
   "Join our community of University students innovating with OpenClaw/Hermes.",
@@ -175,7 +174,7 @@ export function Hero() {
             <span className="relative z-10">Apply Now</span>
           </Link>
         </div>
-        <DeadlineCountdown />
+
       </motion.div>
     </section>
   );
