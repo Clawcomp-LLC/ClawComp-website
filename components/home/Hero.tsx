@@ -7,7 +7,7 @@ import Image from "next/image";
 import { DeadlineCountdown } from "./DeadlineCountdown";
 
 const TYPEWRITER_LINES = [
-  "Join our community of University students innovating with OpenClaw.",
+  "Join our community of University students innovating with OpenClaw/Hermes.",
   "Recieve free Mac Studios, win cash prizes, and network with the Link Ventures ecosystem.",
 ];
 
