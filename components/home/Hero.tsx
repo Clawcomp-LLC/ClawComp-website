@@ -128,6 +128,21 @@ export function Hero() {
               className="h-12 w-auto"
             />
           </Link>
+          <span className="text-text-muted text-xl">×</span>
+          <Link
+            href="https://hermes-agent.nousresearch.com/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="transition-opacity hover:opacity-80"
+          >
+            <Image
+              src="/logos/hermes-logo.png"
+              alt="Hermes"
+              width={216}
+              height={86}
+              className="h-[86px] w-auto"
+            />
+          </Link>
         </div>
         <div className="text-base md:text-lg leading-relaxed text-text-primary mb-8 max-w-prose font-mono min-h-[4.5rem] whitespace-pre-wrap">
           <span className="text-text-primary/40 mr-1">{">"}</span>
