@@ -57,12 +57,6 @@ export function Navbar() {
               {link.label}
             </Link>
           ))}
-          <Link
-            href="/apply"
-            className="bg-brand-red hover:bg-brand-red-hover text-white font-medium px-5 py-2.5 rounded-lg transition-colors text-sm"
-          >
-            Apply
-          </Link>
         </div>
 
         {/* Mobile hamburger button */}
@@ -105,12 +99,6 @@ export function Navbar() {
               {link.label}
             </Link>
           ))}
-          <Link
-            href="/apply"
-            className="bg-brand-red hover:bg-brand-red-hover text-white font-medium px-8 py-3 rounded-lg transition-colors text-sm mt-2"
-          >
-            Apply
-          </Link>
         </div>
       </div>
     </nav>

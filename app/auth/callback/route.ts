@@ -9,10 +9,10 @@ export async function GET(request: NextRequest) {
     request.nextUrl.origin;
 
   if (!code) {
-    return NextResponse.redirect(`${origin}/apply?error=missing_code`);
+    return NextResponse.redirect(`${origin}/?error=missing_code`);
   }
 
-  const response = NextResponse.redirect(`${origin}/apply`);
+  const response = NextResponse.redirect(`${origin}/`);
 
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,

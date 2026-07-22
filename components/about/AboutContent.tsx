@@ -440,19 +440,20 @@ export function AboutContent() {
             transition={{ duration: 0.6 }}
           >
             <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight mb-6">
-              Ready to Build?
+              Applications Are Closed
             </h2>
             <p className="text-text-muted text-lg mb-10 max-w-[37.5rem] mx-auto">
-              One month. Real hardware. Real prizes. Real connections. Apply
-              now and push what you&rsquo;re building further than you would on
-              your own.
+              ClawComp 2026 is no longer accepting applicants. Follow along
+              with the competition and connect with the community on Discord.
             </p>
-            <Link
-              href="/apply"
+            <a
+              href="https://discord.gg/JFTMjG5vvp"
+              target="_blank"
+              rel="noopener noreferrer"
               className="inline-block bg-brand-red hover:bg-brand-red-hover text-white font-medium px-10 py-4 rounded-lg transition-colors text-sm uppercase tracking-wider"
             >
-              Apply Now
-            </Link>
+              Join the Discord
+            </a>
           </motion.div>
         </div>
       </section>

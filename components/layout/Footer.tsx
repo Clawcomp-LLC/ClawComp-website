@@ -113,14 +113,6 @@ export function Footer() {
             <ul className="space-y-3">
               <li>
                 <Link
-                  href="/apply"
-                  className="text-sm text-text-muted hover:text-brand-coral transition-colors"
-                >
-                  Apply Now
-                </Link>
-              </li>
-              <li>
-                <Link
                   href="/sponsors"
                   className="text-sm text-text-muted hover:text-brand-coral transition-colors"
                 >
